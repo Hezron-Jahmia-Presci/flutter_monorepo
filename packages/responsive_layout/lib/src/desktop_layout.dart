@@ -28,6 +28,9 @@ class DesktopLayout extends StatelessWidget {
     final mainItems = navItems.take(mainCount).toList();
     final trailingItems = navItems.skip(mainCount).toList();
 
+    final int? navigationRailSelectedIndex =
+        (selectedIndex < mainCount) ? selectedIndex : null;
+
     return Scaffold(
       appBar: appBar,
       floatingActionButton: floatingActionButton,
@@ -35,13 +38,9 @@ class DesktopLayout extends StatelessWidget {
         children: [
           NavigationRail(
             minWidth: 100,
-            selectedIndex: selectedIndex,
+            selectedIndex: navigationRailSelectedIndex,
             onDestinationSelected: (index) {
-              // If selected index is within mainItems range, just forward
-              if (index < mainCount) {
-                onNavTap(index);
-              }
-              // If index is outside main range, ignore here; trailing taps handled separately
+              onNavTap(index); // indexes in main items range
             },
             backgroundColor: colorScheme.surface,
             indicatorShape: RoundedRectangleBorder(
@@ -59,7 +58,7 @@ class DesktopLayout extends StatelessWidget {
                 mainItems.asMap().entries.map((entry) {
                   final index = entry.key;
                   final item = entry.value;
-                  final isSelected = index == selectedIndex;
+                  final isSelected = (selectedIndex == index);
                   return NavigationRailDestination(
                     icon: Icon(item.unfilledIcon),
                     selectedIcon: Icon(item.filledIcon),
@@ -68,7 +67,6 @@ class DesktopLayout extends StatelessWidget {
                   );
                 }).toList(),
 
-            // Trailing widgets for the last trailingCount items
             trailing:
                 trailingCount > 0
                     ? Column(
