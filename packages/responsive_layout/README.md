@@ -1,39 +1,95 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# responsive_layout
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+A Flutter package that provides a unified responsive layout widget to handle navigation and screen layout seamlessly across desktop and mobile platforms.  
+It simplifies building adaptive apps by automatically switching between `NavigationRail` for desktop and `BottomNavigationBar` for mobile.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- Responsive navigation UI that adapts to screen size  
+- Supports custom app bars and floating action buttons  
+- Easy-to-use API with customizable navigation items and pages  
+- Clean separation of mobile and desktop navigation patterns  
+- Maintains internal navigation state automatically  
+- Lightweight and Flutter-friendly
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Before using this package, make sure you have Flutter SDK installed. This package supports Flutter apps targeting desktop and mobile platforms.
+
+Add this package to your `pubspec.yaml` dependencies:
+
+```yaml
+dependencies:
+  responsive_layout:
+    git:
+      url: https://github.com/YOUR_USERNAME/YOUR_REPO.git
+      path: packages/responsive_layout
+```
+
+Then run:
+
+```bash
+flutter pub get
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+Import the package:
 
 ```dart
-const like = 'sample';
+import 'package:responsive_layout/responsive_layout.dart';
 ```
+
+Create a list of navigation items and corresponding pages:
+
+```dart
+final navItems = const [
+  NavItem(
+    filledIcon: Icons.home,
+    unfilledIcon: Icons.home_outlined,
+    label: 'Home',
+  ),
+  NavItem(
+    filledIcon: Icons.settings,
+    unfilledIcon: Icons.settings_outlined,
+    label: 'Settings',
+  ),
+  NavItem(
+    filledIcon: Icons.person,
+    unfilledIcon: Icons.person_outline,
+    label: 'Profile',
+  ),
+];
+
+final pages = const [
+  HomeScreen(),
+  SettingsScreen(),
+  ProfileScreen(),
+];
+```
+
+Use the `Layout` widget as your main scaffold wrapper:
+
+```dart
+Layout(
+  appBar: AppBar(title: const Text('My App')),
+  floatingActionButton: FloatingActionButton(
+    onPressed: () {},
+    child: const Icon(Icons.add),
+  ),
+  navItems: navItems,
+  pages: pages,
+);
+```
+
+The widget will automatically switch between desktop and mobile navigation UI based on screen width.
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+- Contributions, issues, and feature requests are welcome! Please open a GitHub issue or pull request.  
+- For more detailed examples, see the `/example` folder.  
+- This package is maintained by [Your Name](https://github.com/YOUR_USERNAME).  
+
+---
+
+Made with ❤️ using Flutter  

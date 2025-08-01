@@ -20,6 +20,8 @@ class Layout extends StatelessWidget {
   final Widget? floatingActionButton;
   final List<NavItem> navItems;
   final List<Widget> pages;
+  final int selectedIndex;
+  final ValueChanged<int> onNavTap;
 
   const Layout({
     super.key,
@@ -27,6 +29,8 @@ class Layout extends StatelessWidget {
     this.floatingActionButton,
     required this.navItems,
     required this.pages,
+    required this.selectedIndex,
+    required this.onNavTap,
   });
 
   @override
@@ -39,6 +43,8 @@ class Layout extends StatelessWidget {
         floatingActionButton: floatingActionButton,
         navItems: navItems,
         pages: pages,
+        selectedIndex: selectedIndex,
+        onNavTap: onNavTap,
       );
     } else {
       return DesktopLayout(
@@ -46,6 +52,8 @@ class Layout extends StatelessWidget {
         floatingActionButton: floatingActionButton,
         navItems: navItems,
         pages: pages,
+        selectedIndex: selectedIndex,
+        onNavTap: onNavTap,
       );
     }
   }

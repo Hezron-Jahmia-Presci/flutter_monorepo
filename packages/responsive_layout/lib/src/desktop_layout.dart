@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
-class DesktopLayout extends StatefulWidget {
+class DesktopLayout extends StatelessWidget {
   final PreferredSizeWidget? appBar;
   final Widget? floatingActionButton;
   final List navItems;
   final List<Widget> pages;
+  final int selectedIndex;
+  final ValueChanged<int> onNavTap;
 
   const DesktopLayout({
     super.key,
@@ -12,34 +14,23 @@ class DesktopLayout extends StatefulWidget {
     this.floatingActionButton,
     required this.navItems,
     required this.pages,
+    required this.selectedIndex,
+    required this.onNavTap,
   });
-
-  @override
-  State<DesktopLayout> createState() => _DesktopLayoutState();
-}
-
-class _DesktopLayoutState extends State<DesktopLayout> {
-  int _selectedIndex = 0;
-
-  void _onTap(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: widget.appBar,
-      floatingActionButton: widget.floatingActionButton,
+      appBar: appBar,
+      floatingActionButton: floatingActionButton,
       body: Row(
         children: [
           NavigationRail(
             minWidth: 100,
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: _onTap,
+            selectedIndex: selectedIndex,
+            onDestinationSelected: onNavTap,
             backgroundColor: colorScheme.surface,
             indicatorShape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -53,10 +44,10 @@ class _DesktopLayoutState extends State<DesktopLayout> {
             unselectedLabelTextStyle: TextStyle(color: colorScheme.secondary),
             labelType: NavigationRailLabelType.all,
             destinations:
-                widget.navItems.asMap().entries.map((entry) {
+                navItems.asMap().entries.map((entry) {
                   final index = entry.key;
                   final item = entry.value;
-                  final isSelected = index == _selectedIndex;
+                  final isSelected = index == selectedIndex;
 
                   return NavigationRailDestination(
                     icon: Icon(item.unfilledIcon),
@@ -66,7 +57,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                   );
                 }).toList(),
           ),
-          Expanded(child: widget.pages[_selectedIndex]),
+          Expanded(child: pages[selectedIndex]),
         ],
       ),
     );
