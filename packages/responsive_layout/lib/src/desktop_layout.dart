@@ -4,6 +4,7 @@ class DesktopLayout extends StatelessWidget {
   final PreferredSizeWidget? appBar;
   final Widget? floatingActionButton;
   final List navItems;
+  final List? trailingNavItems; // <- added support for trailing
   final List<Widget> pages;
   final int selectedIndex;
   final ValueChanged<int> onNavTap;
@@ -13,6 +14,7 @@ class DesktopLayout extends StatelessWidget {
     this.appBar,
     this.floatingActionButton,
     required this.navItems,
+    this.trailingNavItems,
     required this.pages,
     required this.selectedIndex,
     required this.onNavTap,
@@ -43,6 +45,7 @@ class DesktopLayout extends StatelessWidget {
             ),
             unselectedLabelTextStyle: TextStyle(color: colorScheme.secondary),
             labelType: NavigationRailLabelType.all,
+
             destinations:
                 navItems.asMap().entries.map((entry) {
                   final index = entry.key;
@@ -56,6 +59,30 @@ class DesktopLayout extends StatelessWidget {
                         isSelected ? const SizedBox.shrink() : Text(item.label),
                   );
                 }).toList(),
+
+            // Bottom trailing icons (optional)
+            trailing:
+                trailingNavItems != null
+                    ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children:
+                          trailingNavItems!.asMap().entries.map((entry) {
+                            final indexOffset = navItems.length + entry.key;
+                            final item = entry.value;
+                            final isSelected = selectedIndex == indexOffset;
+
+                            return IconButton(
+                              icon: Icon(
+                                isSelected
+                                    ? item.filledIcon
+                                    : item.unfilledIcon,
+                              ),
+                              tooltip: item.label,
+                              onPressed: () => onNavTap(indexOffset),
+                            );
+                          }).toList(),
+                    )
+                    : null,
           ),
           Expanded(child: pages[selectedIndex]),
         ],
