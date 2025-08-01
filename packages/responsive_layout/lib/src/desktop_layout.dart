@@ -4,25 +4,34 @@ class DesktopLayout extends StatelessWidget {
   final PreferredSizeWidget? appBar;
   final Widget? floatingActionButton;
   final List navItems;
-  final List? trailingNavItems; // <- added support for trailing
   final List<Widget> pages;
   final int selectedIndex;
   final ValueChanged<int> onNavTap;
+  final int? trailingCount;
 
   const DesktopLayout({
     super.key,
     this.appBar,
     this.floatingActionButton,
     required this.navItems,
-    this.trailingNavItems,
     required this.pages,
     required this.selectedIndex,
     required this.onNavTap,
+    this.trailingCount,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
+    final int splitIndex =
+        trailingCount != null
+            ? navItems.length - trailingCount!
+            : navItems.length;
+
+    final topItems = navItems.sublist(0, splitIndex);
+    final trailingItems =
+        trailingCount != null ? navItems.sublist(splitIndex) : [];
 
     return Scaffold(
       appBar: appBar,
@@ -45,12 +54,11 @@ class DesktopLayout extends StatelessWidget {
             ),
             unselectedLabelTextStyle: TextStyle(color: colorScheme.secondary),
             labelType: NavigationRailLabelType.all,
-
             destinations:
-                navItems.asMap().entries.map((entry) {
+                topItems.asMap().entries.map((entry) {
                   final index = entry.key;
                   final item = entry.value;
-                  final isSelected = index == selectedIndex;
+                  final isSelected = selectedIndex == index;
 
                   return NavigationRailDestination(
                     icon: Icon(item.unfilledIcon),
@@ -59,17 +67,15 @@ class DesktopLayout extends StatelessWidget {
                         isSelected ? const SizedBox.shrink() : Text(item.label),
                   );
                 }).toList(),
-
-            // Bottom trailing icons (optional)
             trailing:
-                trailingNavItems != null
+                trailingItems.isNotEmpty
                     ? Column(
                       mainAxisSize: MainAxisSize.min,
                       children:
-                          trailingNavItems!.asMap().entries.map((entry) {
-                            final indexOffset = navItems.length + entry.key;
+                          trailingItems.asMap().entries.map((entry) {
+                            final offsetIndex = splitIndex + entry.key;
                             final item = entry.value;
-                            final isSelected = selectedIndex == indexOffset;
+                            final isSelected = selectedIndex == offsetIndex;
 
                             return IconButton(
                               icon: Icon(
@@ -78,7 +84,7 @@ class DesktopLayout extends StatelessWidget {
                                     : item.unfilledIcon,
                               ),
                               tooltip: item.label,
-                              onPressed: () => onNavTap(indexOffset),
+                              onPressed: () => onNavTap(offsetIndex),
                             );
                           }).toList(),
                     )
