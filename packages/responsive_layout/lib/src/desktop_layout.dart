@@ -25,13 +25,12 @@ class DesktopLayout extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     final int splitIndex =
-        trailingCount != null
+        (trailingCount != null && trailingCount! > 0)
             ? navItems.length - trailingCount!
             : navItems.length;
 
     final topItems = navItems.sublist(0, splitIndex);
-    final trailingItems =
-        trailingCount != null ? navItems.sublist(splitIndex) : [];
+    final trailingItems = navItems.sublist(splitIndex);
 
     return Scaffold(
       appBar: appBar,
@@ -54,6 +53,7 @@ class DesktopLayout extends StatelessWidget {
             ),
             unselectedLabelTextStyle: TextStyle(color: colorScheme.secondary),
             labelType: NavigationRailLabelType.all,
+
             destinations:
                 topItems.asMap().entries.map((entry) {
                   final index = entry.key;
@@ -67,6 +67,7 @@ class DesktopLayout extends StatelessWidget {
                         isSelected ? const SizedBox.shrink() : Text(item.label),
                   );
                 }).toList(),
+
             trailing:
                 trailingItems.isNotEmpty
                     ? Column(
