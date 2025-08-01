@@ -1,0 +1,9 @@
+name: flutter_monorepo
+description: A monorepo for my Flutter packages and apps.
+publish_to: none
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  melos: ^6.3.3
