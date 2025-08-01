@@ -7,7 +7,7 @@ class DesktopLayout extends StatelessWidget {
   final List<Widget> pages;
   final int selectedIndex;
   final ValueChanged<int> onNavTap;
-  final int? trailingCount;
+  final int trailingCount;
 
   const DesktopLayout({
     super.key,
@@ -17,20 +17,16 @@ class DesktopLayout extends StatelessWidget {
     required this.pages,
     required this.selectedIndex,
     required this.onNavTap,
-    this.trailingCount,
+    this.trailingCount = 0,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    final int splitIndex =
-        (trailingCount != null && trailingCount! > 0)
-            ? navItems.length - trailingCount!
-            : navItems.length;
-
-    final topItems = navItems.sublist(0, splitIndex);
-    final trailingItems = navItems.sublist(splitIndex);
+    final int mainCount = navItems.length - trailingCount;
+    final mainItems = navItems.take(mainCount).toList();
+    final trailingItems = navItems.skip(mainCount).toList();
 
     return Scaffold(
       appBar: appBar,
@@ -40,7 +36,13 @@ class DesktopLayout extends StatelessWidget {
           NavigationRail(
             minWidth: 100,
             selectedIndex: selectedIndex,
-            onDestinationSelected: onNavTap,
+            onDestinationSelected: (index) {
+              // If selected index is within mainItems range, just forward
+              if (index < mainCount) {
+                onNavTap(index);
+              }
+              // If index is outside main range, ignore here; trailing taps handled separately
+            },
             backgroundColor: colorScheme.surface,
             indicatorShape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -53,13 +55,11 @@ class DesktopLayout extends StatelessWidget {
             ),
             unselectedLabelTextStyle: TextStyle(color: colorScheme.secondary),
             labelType: NavigationRailLabelType.all,
-
             destinations:
-                topItems.asMap().entries.map((entry) {
+                mainItems.asMap().entries.map((entry) {
                   final index = entry.key;
                   final item = entry.value;
-                  final isSelected = selectedIndex == index;
-
+                  final isSelected = index == selectedIndex;
                   return NavigationRailDestination(
                     icon: Icon(item.unfilledIcon),
                     selectedIcon: Icon(item.filledIcon),
@@ -68,24 +68,31 @@ class DesktopLayout extends StatelessWidget {
                   );
                 }).toList(),
 
+            // Trailing widgets for the last trailingCount items
             trailing:
-                trailingItems.isNotEmpty
+                trailingCount > 0
                     ? Column(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children:
                           trailingItems.asMap().entries.map((entry) {
-                            final offsetIndex = splitIndex + entry.key;
+                            final trailingIndex = entry.key;
                             final item = entry.value;
-                            final isSelected = selectedIndex == offsetIndex;
+                            final realIndex = mainCount + trailingIndex;
+                            final isSelected = selectedIndex == realIndex;
 
                             return IconButton(
-                              icon: Icon(
-                                isSelected
-                                    ? item.filledIcon
-                                    : item.unfilledIcon,
-                              ),
+                              icon:
+                                  isSelected
+                                      ? Icon(
+                                        item.filledIcon,
+                                        color: colorScheme.primary,
+                                      )
+                                      : Icon(
+                                        item.unfilledIcon,
+                                        color: colorScheme.secondary,
+                                      ),
                               tooltip: item.label,
-                              onPressed: () => onNavTap(offsetIndex),
+                              onPressed: () => onNavTap(realIndex),
                             );
                           }).toList(),
                     )
