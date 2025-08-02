@@ -37,7 +37,8 @@ class DesktopLayout extends StatelessWidget {
         children: [
           NavigationRail(
             minWidth: 100,
-            selectedIndex: selectedIndex,
+            selectedIndex:
+                selectedIndex < mainItems.length ? selectedIndex : -1,
             onDestinationSelected: onNavTap,
             backgroundColor: colorScheme.surface,
             indicatorShape: RoundedRectangleBorder(
@@ -51,8 +52,6 @@ class DesktopLayout extends StatelessWidget {
             ),
             unselectedLabelTextStyle: TextStyle(color: colorScheme.secondary),
             labelType: NavigationRailLabelType.all,
-
-            // Show ONLY the main (non-trailing) items
             destinations:
                 mainItems.asMap().entries.map((entry) {
                   final index = entry.key;
@@ -66,8 +65,6 @@ class DesktopLayout extends StatelessWidget {
                         isSelected ? const SizedBox.shrink() : Text(item.label),
                   );
                 }).toList(),
-
-            // Bottom pinned icons
             trailing:
                 trailingItems.isNotEmpty
                     ? Expanded(
@@ -99,6 +96,7 @@ class DesktopLayout extends StatelessWidget {
                     )
                     : null,
           ),
+
           Expanded(child: pages[selectedIndex]),
         ],
       ),
