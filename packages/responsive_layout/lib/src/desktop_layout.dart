@@ -87,13 +87,21 @@ class DesktopLayout extends StatelessWidget {
                                 final item = entry.value;
                                 final isSelected = index == selectedIndex;
 
-                                return GestureDetector(
-                                  behavior: HitTestBehavior.translucent,
-                                  onTap: () => onNavTap(index),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 8,
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 0,
+                                      backgroundColor: Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                      padding: EdgeInsets.zero,
+                                      minimumSize: const Size(56, 56),
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
                                     ),
+                                    onPressed: () => onNavTap(index),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
