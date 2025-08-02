@@ -7,7 +7,7 @@ class DesktopLayout extends StatelessWidget {
   final List<Widget> pages;
   final int selectedIndex;
   final ValueChanged<int> onNavTap;
-  final int? navRailTrailingCount; // <-- Optional trailing count
+  final int? navRailTrailingCount;
 
   const DesktopLayout({
     super.key,
@@ -17,7 +17,7 @@ class DesktopLayout extends StatelessWidget {
     required this.pages,
     required this.selectedIndex,
     required this.onNavTap,
-    this.navRailTrailingCount, // <-- Optional
+    this.navRailTrailingCount,
   });
 
   @override
@@ -51,58 +51,51 @@ class DesktopLayout extends StatelessWidget {
             ),
             unselectedLabelTextStyle: TextStyle(color: colorScheme.secondary),
             labelType: NavigationRailLabelType.all,
-            destinations: [
-              ...mainItems.asMap().entries.map((entry) {
-                final index = entry.key;
-                final item = entry.value;
-                final isSelected = index == selectedIndex;
-                return NavigationRailDestination(
-                  icon: Icon(item.unfilledIcon),
-                  selectedIcon: Icon(item.filledIcon),
-                  label:
-                      isSelected ? const SizedBox.shrink() : Text(item.label),
-                );
-              }),
-              if (trailingItems.isNotEmpty)
-                const NavigationRailDestination(
-                  icon: SizedBox.shrink(),
-                  label: SizedBox.shrink(),
-                ), // Placeholder for Spacer
-              ...trailingItems.asMap().entries.map((entry) {
-                final index = splitIndex + entry.key;
-                final item = entry.value;
-                final isSelected = index == selectedIndex;
-                return NavigationRailDestination(
-                  icon: Icon(item.unfilledIcon),
-                  selectedIcon: Icon(item.filledIcon),
-                  label:
-                      isSelected ? const SizedBox.shrink() : Text(item.label),
-                );
-              }),
-            ],
+
+            // Show ONLY the main (non-trailing) items
+            destinations:
+                mainItems.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final item = entry.value;
+                  final isSelected = index == selectedIndex;
+
+                  return NavigationRailDestination(
+                    icon: Icon(item.unfilledIcon),
+                    selectedIcon: Icon(item.filledIcon),
+                    label:
+                        isSelected ? const SizedBox.shrink() : Text(item.label),
+                  );
+                }).toList(),
+
+            // Bottom pinned icons
             trailing:
                 trailingItems.isNotEmpty
-                    ? Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children:
-                          trailingItems.asMap().entries.map((entry) {
-                            final index = splitIndex + entry.key;
-                            final item = entry.value;
-                            final isSelected = index == selectedIndex;
-                            return IconButton(
-                              icon: Icon(
-                                isSelected
-                                    ? item.filledIcon
-                                    : item.unfilledIcon,
-                                color:
+                    ? Expanded(
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children:
+                              trailingItems.asMap().entries.map((entry) {
+                                final index = splitIndex + entry.key;
+                                final item = entry.value;
+                                final isSelected = index == selectedIndex;
+                                return IconButton(
+                                  icon: Icon(
                                     isSelected
-                                        ? colorScheme.primary
-                                        : colorScheme.secondary,
-                              ),
-                              onPressed: () => onNavTap(index),
-                              tooltip: item.label,
-                            );
-                          }).toList(),
+                                        ? item.filledIcon
+                                        : item.unfilledIcon,
+                                    color:
+                                        isSelected
+                                            ? colorScheme.primary
+                                            : colorScheme.secondary,
+                                  ),
+                                  onPressed: () => onNavTap(index),
+                                  tooltip: item.label,
+                                );
+                              }).toList(),
+                        ),
+                      ),
                     )
                     : null,
           ),
