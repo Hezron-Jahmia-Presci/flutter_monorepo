@@ -22,6 +22,7 @@ class Layout extends StatelessWidget {
   final List<Widget> pages;
   final int selectedIndex;
   final ValueChanged<int> onNavTap;
+  final int? navRailTrailingCount; // <-- Add this
 
   const Layout({
     super.key,
@@ -31,6 +32,7 @@ class Layout extends StatelessWidget {
     required this.pages,
     required this.selectedIndex,
     required this.onNavTap,
+    this.navRailTrailingCount, // <-- Include in constructor
   });
 
   @override
@@ -54,6 +56,7 @@ class Layout extends StatelessWidget {
         pages: pages,
         selectedIndex: selectedIndex,
         onNavTap: onNavTap,
+        navRailTrailingCount: navRailTrailingCount, // <-- Pass to DesktopLayout
       );
     }
   }
