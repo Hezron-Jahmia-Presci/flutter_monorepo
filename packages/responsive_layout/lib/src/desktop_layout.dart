@@ -30,6 +30,12 @@ class DesktopLayout extends StatelessWidget {
     final mainItems = navItems.take(splitIndex).toList();
     final trailingItems = navItems.skip(splitIndex).toList();
 
+    // Safe selected index for NavigationRail
+    final safeSelectedIndex =
+        (selectedIndex >= 0 && selectedIndex < mainItems.length)
+            ? selectedIndex
+            : null;
+
     return Scaffold(
       appBar: appBar,
       floatingActionButton: floatingActionButton,
@@ -37,8 +43,7 @@ class DesktopLayout extends StatelessWidget {
         children: [
           NavigationRail(
             minWidth: 100,
-            selectedIndex:
-                selectedIndex < mainItems.length ? selectedIndex : null,
+            selectedIndex: safeSelectedIndex,
             onDestinationSelected: onNavTap,
             backgroundColor: colorScheme.surface,
             indicatorShape: RoundedRectangleBorder(
@@ -52,6 +57,8 @@ class DesktopLayout extends StatelessWidget {
             ),
             unselectedLabelTextStyle: TextStyle(color: colorScheme.secondary),
             labelType: NavigationRailLabelType.all,
+
+            // Main items shown in destinations
             destinations:
                 mainItems.asMap().entries.map((entry) {
                   final index = entry.key;
@@ -65,6 +72,8 @@ class DesktopLayout extends StatelessWidget {
                         isSelected ? const SizedBox.shrink() : Text(item.label),
                   );
                 }).toList(),
+
+            // Trailing items pinned at the bottom with labels
             trailing:
                 trailingItems.isNotEmpty
                     ? Expanded(
@@ -77,18 +86,40 @@ class DesktopLayout extends StatelessWidget {
                                 final index = splitIndex + entry.key;
                                 final item = entry.value;
                                 final isSelected = index == selectedIndex;
-                                return IconButton(
-                                  icon: Icon(
-                                    isSelected
-                                        ? item.filledIcon
-                                        : item.unfilledIcon,
-                                    color:
-                                        isSelected
-                                            ? colorScheme.primary
-                                            : colorScheme.secondary,
+
+                                return GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  onTap: () => onNavTap(index),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          isSelected
+                                              ? item.filledIcon
+                                              : item.unfilledIcon,
+                                          color:
+                                              isSelected
+                                                  ? colorScheme.primary
+                                                  : colorScheme.secondary,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          item.label,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color:
+                                                isSelected
+                                                    ? colorScheme.primary
+                                                    : colorScheme.secondary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  onPressed: () => onNavTap(index),
-                                  tooltip: item.label,
                                 );
                               }).toList(),
                         ),
