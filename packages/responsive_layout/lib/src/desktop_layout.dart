@@ -38,7 +38,7 @@ class DesktopLayout extends StatelessWidget {
           NavigationRail(
             minWidth: 100,
             selectedIndex:
-                selectedIndex < mainItems.length ? selectedIndex : -1,
+                selectedIndex < mainItems.length ? selectedIndex : null,
             onDestinationSelected: onNavTap,
             backgroundColor: colorScheme.surface,
             indicatorShape: RoundedRectangleBorder(
